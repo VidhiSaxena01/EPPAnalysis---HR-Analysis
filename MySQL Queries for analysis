@@ -1,0 +1,135 @@
+# EPPAnalysis---HR-Analysis
+The goal of this project is to analyze employee performance and productivity within the organization by examining factors like demographics, compensation, workload, and job satisfaction.
+
+-- What is the distribution of employees across departments?
+
+SELECT 
+    Department, COUNT(Employee_ID) AS Total_Employees
+FROM
+    eppanalysis
+GROUP BY Department;
+
+
+-- What is the age distribution of employees?
+
+SELECT 
+    CASE 
+        WHEN Age < 30 THEN 'Under 30'
+        WHEN Age BETWEEN 30 AND 39 THEN '30-39'
+        WHEN Age BETWEEN 40 AND 49 THEN '40-49'
+        ELSE '50 and above'
+    END AS Age_Group,
+    COUNT(Employee_ID) AS Total_Employees
+FROM eppanalysis
+GROUP BY Age_Group
+ORDER BY Age_Group;
+
+
+-- Does education level affect performance?
+
+SELECT 
+    Education_Level,
+    ROUND(AVG(performance_Score), 2) AS Avg_Performance_Score
+FROM
+    eppanalysis
+GROUP BY Education_Level
+ORDER BY Avg_Performance_Score DESC;
+
+
+-- How does the average performance score vary by department?
+
+SELECT 
+    Department,
+    ROUND(AVG(Performance_Score), 2) AS Avg_Performance_Score
+FROM
+    eppanalysis
+GROUP BY Department
+ORDER BY Avg_Performance_Score DESC;
+
+
+-- Is there a connection between the number of work hours per week and performance scores?
+
+SELECT 
+    CASE
+        WHEN Work_Hours_Per_Week BETWEEN 30 AND 40 THEN '30-40 hours'
+        WHEN Work_Hours_Per_Week BETWEEN 40 AND 50 THEN '40-50 hours'
+        WHEN Work_Hours_Per_Week BETWEEN 50 AND 60 THEN '50-60 hours'
+        ELSE 'Other'
+    END AS Work_Hour_Range,
+    ROUND(AVG(Performance_Score), 2) AS Avg_Performance_Score,
+    COUNT(*) AS Employee_Count
+FROM 
+    eppanalysis
+GROUP BY 
+    Work_Hour_Range
+ORDER BY 
+    Work_Hour_Range;
+
+
+-- How do training hours affect performance scores?
+
+SELECT 
+    CASE
+        WHEN Training_Hours < 10 THEN 'Low (0-10)'
+        WHEN Training_Hours BETWEEN 10 AND 20 THEN 'Medium (10-20)'
+        ELSE 'High (20+)'
+    END AS Training_Level,
+    Round(AVG(Performance_Score),1) AS Avg_Performance_Score
+FROM
+    eppanalysis
+GROUP BY Training_Level
+ORDER BY Training_Level;
+
+
+-- What is the average salary across different departments?
+
+SELECT 
+    Department,
+    CONCAT('$', ROUND(AVG(Monthly_Salary), 0)) AS Avg_Salary
+FROM
+    eppanalysis
+GROUP BY Department
+ORDER BY Avg_Salary DESC;
+
+
+-- How does employee satisfaction vary by department?
+
+SELECT 
+    Department,
+    Round(AVG(Employee_Satisfaction_Score),1) AS Avg_Employee_Satisfaction_Score
+FROM
+    eppanalysis
+GROUP BY Department
+ORDER BY Avg_Employee_Satisfaction_Score DESC;
+
+
+-- Which departments have the highest and lowest resignation rates?
+
+SELECT Department, 
+       COUNT(CASE WHEN Resigned = 'TRUE' THEN 1 END) AS Resignations,
+       COUNT(Employee_ID) AS Total_Employees,
+       ROUND((COUNT(CASE WHEN Resigned = 'TRUE' THEN 1 END) / COUNT(Employee_ID)) * 100, 1) AS Resignation_Rate
+FROM eppanalysis
+GROUP BY Department
+ORDER BY Resignation_Rate DESC;
+
+
+-- Which departments have the highest average overtime hours?
+
+SELECT 
+    Department,
+    ROUND(AVG(Overtime_Hours), 0) AS Avg_Overtime_Hours
+FROM
+    eppanalysis
+GROUP BY Department
+ORDER BY Avg_Overtime_Hours DESC;
+
+
+-- What is the average number of projects handled per employee in each department?
+
+SELECT 
+    Department, Round(AVG(Projects_Handled),0) AS Avg_Projects_Handled
+FROM
+    eppanalysis
+GROUP BY Department
+ORDER BY Avg_Projects_Handled DESC;
